@@ -22,11 +22,11 @@ And here is the [paper](https://arxiv.org/pdf/1812.01187.pdf).
 * 标准化RGB通道，通过分别减去均值[123.68,116.779,103.939],再除以[58.393,57.12,57.375]。  
 
 测试时
-> 保持长宽比例，将短边resize成256，再中心裁剪出224x224区域；
-> 同上的标准化过程。
+* 保持长宽比例，将短边resize成256，再中心裁剪出224x224区域；  
+* 同上的标准化过程。
 
 初始化
-> 卷积和全连接层`weights`的初始化都基于`Xavier algorithm`，就是在[-a,a]均匀取随机值。
+* 卷积和全连接层`weights`的初始化都基于`Xavier algorithm`，就是在[-a,a]均匀取随机值。
 a的值为
 ```
 a=sqrt(6/(d_in+d_out))
@@ -78,7 +78,7 @@ a=sqrt(6/(d_in+d_out))
 在原始的`ResNet`的基础上进行了略微修改
 原始的ResNet如下，
 ![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/ResNet.png)
-> ResNet Stage的下采样的第一个block先用了stride为2的1x1卷积，这会丢失原来`feature map` **3/4**的信息，
+* ResNet Stage的下采样的第一个block先用了stride为2的1x1卷积，这会丢失原来`feature map` **3/4**的信息，
 从而降低了精度，通过修改，使得1x1卷积步长为1，后面3x3卷积步长为2，新的结构为ResNet-B;
 ```
     with tf.variable_scope(scope):
@@ -96,7 +96,7 @@ a=sqrt(6/(d_in+d_out))
                           padding="VALID", biases_initializer=None, data_format=DATA_FORMAT,
                           activation_fn=None, scope='conv2')
 ```
-> ResNet一开始的7x7的卷积可以用3个3x3卷积代替，这在inception中就已经用到了，能够获得同样的感受野，但是减少了参数，
+* ResNet一开始的7x7的卷积可以用3个3x3卷积代替，这在inception中就已经用到了，能够获得同样的感受野，但是减少了参数，
 加深了深度，新的结构为ResNet-C;
 ```
     with tf.variable_scope(scope):
@@ -115,7 +115,7 @@ a=sqrt(6/(d_in+d_out))
         net = tf.pad(net, paddings=[[0, 0], [1, 1], [1, 1], [0, 0]])
         net = slim.max_pool2d(net, kernel_size=[3, 3], stride=2, padding="VALID", data_format=DATA_FORMAT)
 ```
-> ResNet 的`shortcut`在降采样的时候也用了步长为2的1x1卷积，因此也丢失了**3/4**的信息，相应的修改是在1x1卷积之前接一
+* ResNet 的`shortcut`在降采样的时候也用了步长为2的1x1卷积，因此也丢失了**3/4**的信息，相应的修改是在1x1卷积之前接一
 个`avg pooling`来降采样，使得1x1卷积的步长仍为1，新的结构为ResNet-D;
 ```
 shortcut = slim.avg_pool2d(input_x, kernel_size=[stride, stride], stride=stride, padding="SAME",
