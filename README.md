@@ -35,8 +35,8 @@ Index
 我们在训练网络的时候经常会发现一模一样的网络总是达不到人家的效果，主要是因为他们还有一些`trick`。  
 这篇文章主要就是列举了一些`tricks`以及对**ResNet**网络结构进行了一些调整，就将`ResNet-50`在`ImageNet`
 的结果从**75.3%** 提升到了 **79.29%** ，甚至超过了`SE-ResNet-50`的 **76.71%** 以及`DenseNet-201`的 **79.29%** 。
-结果如下：
-![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result.png)
+结果如下：  
+![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result.png)  
 
 ## 1.训练程序
 ### 1.1Baseline 
@@ -65,8 +65,8 @@ a=sqrt(6/(d_in+d_out))
 
 ### 1.2Results
 用`ISLVR2012`数据集，训练集**130万**共**1000**类，
-结果如下
-![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result3.png)
+结果如下  
+![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result3.png)  
 
 ## 2.有效训练
 ### 2.1大规模batch训练
@@ -97,16 +97,16 @@ a=sqrt(6/(d_in+d_out))
 
 ### 2.3Results
 结果如下  
-![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result4.png)
+![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result4.png)  
 消融结果如下  
-![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result31.png)
+![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result31.png)  
 
 
 ## 3.模型调整
 在原始的`ResNet`的基础上进行了略微修改
 ### 3.1模型微调
 原始的ResNet如下，
-![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/ResNet.png)
+![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/ResNet.png)  
 * ResNet Stage的下采样的第一个block先用了stride为2的1x1卷积，这会丢失原来`feature map` **3/4**的信息，
 从而降低了精度，通过修改，使得1x1卷积步长为1，后面3x3卷积步长为2，新的结构为ResNet-B;
 ```
@@ -155,15 +155,15 @@ shortcut = slim.conv2d(shortcut, num_outputs=base_channel*4, kernel_size=[1, 1],
                                        activation_fn=None,
                                        scope='shortcut')
 ```
-新的ResNet图如下,代码在`py`文件中。
-![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/new%20ResNet.png)
-### 3.2Results
-![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result5.png)
+新的ResNet图如下,代码在`py`文件中。  
+![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/new%20ResNet.png)  
+### 3.2Results  
+![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result5.png)  
 
 ## 4.训练改进
 ### 4.1学习率余弦衰减
-`batch t`对于总共的`batch T`的学习率为，
-![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/cos.png)
+`batch t`对于总共的`batch T`的学习率为，  
+![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/cos.png)  
 
 ### 4.2标签平滑
 见代码
@@ -177,8 +177,8 @@ batch_labels = (1.0-label_smoothing)*batch_labels+label_smoothing/N_CLASSES
 ### 4.3知识蒸馏
 这个之前是在模型压缩的时候看到的，就是用一个大的教师网络来指导小型网络的学习，
 例如这里用ResNet-152来指导ResNet-50学习，有兴趣的可以看下[原文](https://arxiv.org/abs/1503.02531v1)。
-具体就是如图
-![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/knowledge.png)
+具体就是如图  
+![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/knowledge.png)  
 步骤：
 * 训练大模型：先用hard target，也就是正常的label训练大模型；
 * 计算soft target：利用训练好的大模型来计算soft target。也就是大模型“软化后”再经过softmax的output；
@@ -194,12 +194,12 @@ y=lambda*x1+(1-lambda)y2
 ```
 
 ### 4.5Results
-结果如下
+结果如下  
 ![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result6.png)
 
 ## 5.迁移学习
 证明了这些`tricks`以及微调的网络对于**目标检测**以及**图像分割**也是有作用的。
-结果如下
+结果如下  
 ![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result_transfer.png)
 
 
