@@ -7,28 +7,34 @@ And here is the [paper](https://arxiv.org/pdf/1812.01187.pdf).
 Index
 ---
 <!-- TOC -->
-论文笔记
-- [How to do multilabel classification.](#How\to\do\multilabel\classification.)  
-    - [Change Label Map](##Change\Label\Map)  
-    - [With scikit-learn tools](##With\scikit-learn\tools)  
-    - [Tips](##Tips)  
-    - [Change the Loss Function](##Change\the\Loss\Function)  
-    - [How to predict](##How\to\predict)  
-    - [Sample Imbalance](##Sample\Imbalance)  
-    - [Spy](##Spy)   
-- [How to Run the Model in Vs2017 with ncnn.](#How\to\Run\the\Model\in\Vs2017\with\ncnn.)  
-    - [Step](##Step)  
-    - [Tips](##Tips)   
-- [Model Compression](#Model\Compression)  
-    - [Quantization with tensorflow](##Quantization\with\tensorflow)  
-    - [Quantization with ncnn](##Quantization\with\ncnn)  
- 
+**论文笔记**
+- [1. 训练程序](## 1.训练程序)  
+    - [1.1 Baseline](###1.1Baseline)  
+    - [1.2 Results](###1.2Results)  
+- [2. 有效训练](##2.有效训练)  
+    - [2.1 大规模batch训练](###2.1大规模batch训练)
+            - [2.1.1 线性降低学习率](####2.1.1线性降低学习率)
+            - [2.1.2 学习率热身](####2.1.2学习率热身)
+            - [2.1.3 Alpha初始化为0](####2.1.3Alpha初始化为0)
+            - [2.1.4 Bias不衰减](####2.1.4Bias不衰减)
+    - [2.2 低精度训练](###2.2低精度训练)
+    - [2.3 Results](##Results)   
+- [3. 模型调整](##3.模型调整)  
+    - [3.1 模型微调](###3.1模型微调)  
+    - [3.2 Results](##3.2Results)  
+- [4. 训练改进](##4.训练改进)  
+    - [###4.1 学习率余弦衰减](###4.1学习率余弦衰减)  
+    - [###4.2 标签平滑](###4.2标签平滑)  
+    - [###4.3 知识蒸馏](###4.3知识蒸馏)
+    - [###4.4 混合训练](###4.4混合训练)
+    - [###4.5 Results](###4.5Results)
+- [5. 迁移学习](#5.迁移学习)   
 <!-- /TOC -->  
 
 # 论文笔记
 我们在训练网络的时候经常会发现一模一样的网络总是达不到人家的效果，主要是因为他们还有一些`trick`。  
 这篇文章主要就是列举了一些`tricks`以及对**ResNet**网络结构进行了一些调整，就将`ResNet-50`在`ImageNet`
-的结果从**75.3%**提升到了**79.29%**，甚至超过了`SE-ResNet-50`的**76.71%**以及`DenseNet-201`的**79.29%**。
+的结果从**75.3%** 提升到了 **79.29%** ，甚至超过了`SE-ResNet-50`的 **76.71%** 以及`DenseNet-201`的 **79.29%** 。
 结果如下：
 ![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result.png)
 
@@ -79,7 +85,7 @@ a=sqrt(6/(d_in+d_out))
 因此提出了热身阶段，也就是先用一些数据 `m batches`例如5个epochs来使得学习率从0升到初始学习率，
 比如第i个batch，学习率为 `i*u/m`,`u`是初始学习率。
 
-#### 2.1.3alpha初始化为0
+#### 2.1.3Alpha初始化为0
 将BN的`alpha`也初始化为0，这样只有`residual blocks`会返回他的输入，初始阶段会更容易训练。
 
 #### 2.1.4Bias不衰减
@@ -89,7 +95,7 @@ a=sqrt(6/(d_in+d_out))
 ### 2.2低精度训练
 用`float16`代替`float32`进行运算
 
-### 2.2Results
+### 2.3Results
 结果如下
 ![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result4.png)
 消融结果如下
