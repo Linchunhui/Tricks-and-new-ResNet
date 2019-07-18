@@ -98,7 +98,7 @@ a=sqrt(6/(d_in+d_out))
 ### 2.3Results
 结果如下
 ![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result4.png)
-消融结果如下
+消融结果如下  
 ![image]()
 
 
