@@ -96,10 +96,10 @@ a=sqrt(6/(d_in+d_out))
 用`float16`代替`float32`进行运算
 
 ### 2.3Results
-结果如下
+结果如下  
 ![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result4.png)
 消融结果如下  
-![image]()
+![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result31.png)
 
 
 ## 3.模型调整
@@ -163,7 +163,7 @@ shortcut = slim.conv2d(shortcut, num_outputs=base_channel*4, kernel_size=[1, 1],
 ## 4.训练改进
 ### 4.1学习率余弦衰减
 `batch t`对于总共的`batch T`的学习率为，
-![image]()
+![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/cos.png)
 
 ### 4.2标签平滑
 见代码
