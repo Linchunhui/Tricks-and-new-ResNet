@@ -72,10 +72,12 @@ a=sqrt(6/(d_in+d_out))
 结果如下
 ![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result4.png)
 消融结果如下
+![image]()
 
 
 ## 3.模型调整
 在原始的`ResNet`的基础上进行了略微修改
+### 3.1模型微调
 原始的ResNet如下，
 ![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/ResNet.png)
 * ResNet Stage的下采样的第一个block先用了stride为2的1x1卷积，这会丢失原来`feature map` **3/4**的信息，
@@ -128,3 +130,35 @@ shortcut = slim.conv2d(shortcut, num_outputs=base_channel*4, kernel_size=[1, 1],
 ```
 新的ResNet图如下,代码在`py`文件中。
 ![image]()
+### 3.2Results
+![image]()
+
+## 4.训练改进
+### 4.1学习率余弦衰减
+`batch t`对于总共的`batch T`的学习率为，
+![image]()
+
+### 4.2标签平滑
+见代码
+```
+label_smoothing = 0.1
+batch_labels = (1.0-label_smoothing)*batch_labels+label_smoothing/N_CLASSES
+```
+比如原来三类的one-hot变量为[0,1,0],平滑后就变成了[0.03,0.9,0.03],
+相当于原来是`狄拉克`函数，不是1就是0，比较尖锐，比较难学习，平滑之后就更容易学习了。
+
+### 4.3知识蒸馏
+这个之前是在模型压缩的时候看到的，就是用一个大的教师网络来指导小型网络的学习，
+例如这里用ResNet-152来指导ResNet-50学习，有兴趣的可以看下原文。
+具体就是如图
+![image]()
+步骤：
+* 训练大模型：先用hard target，也就是正常的label训练大模型；
+* 计算soft target：利用训练好的大模型来计算soft target。也就是大模型“软化后”再经过softmax的output；
+* 训练小模型，在小模型的基础上再加一个额外的soft target的loss function，通过lambda来调节两个loss functions的比重。
+* 预测时，将训练好的小模型按常规方式（右图）使用。
+
+
+
+
+
