@@ -9,7 +9,7 @@ And here is the [paper](https://arxiv.org/pdf/1812.01187.pdf).
 这篇文章主要就是列举了一些`tricks`以及对**ResNet**网络结构进行了一些调整，就将`ResNet-50`在`ImageNet`
 的结果从**75.3%**提升到了**79.29**，甚至超过了`SE-ResNet-50`的**76.71**以及`DenseNet-201`的**79.29%**。
 结果如下：
- <div align="center">![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result.png)</div>
+<div align="center">![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result.png)</div>
 
 ## 1.训练程序
 ### 1.1Baseline 
@@ -129,9 +129,9 @@ shortcut = slim.conv2d(shortcut, num_outputs=base_channel*4, kernel_size=[1, 1],
                                        scope='shortcut')
 ```
 新的ResNet图如下,代码在`py`文件中。
-![image]()
+![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/new%20ResNet.png)
 ### 3.2Results
-![image]()
+![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result5.png)
 
 ## 4.训练改进
 ### 4.1学习率余弦衰减
@@ -149,15 +149,31 @@ batch_labels = (1.0-label_smoothing)*batch_labels+label_smoothing/N_CLASSES
 
 ### 4.3知识蒸馏
 这个之前是在模型压缩的时候看到的，就是用一个大的教师网络来指导小型网络的学习，
-例如这里用ResNet-152来指导ResNet-50学习，有兴趣的可以看下原文。
+例如这里用ResNet-152来指导ResNet-50学习，有兴趣的可以看下[原文](https://arxiv.org/abs/1503.02531v1)。
 具体就是如图
-![image]()
+![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/knowledge.png)
 步骤：
 * 训练大模型：先用hard target，也就是正常的label训练大模型；
 * 计算soft target：利用训练好的大模型来计算soft target。也就是大模型“软化后”再经过softmax的output；
 * 训练小模型，在小模型的基础上再加一个额外的soft target的loss function，通过lambda来调节两个loss functions的比重。
 * 预测时，将训练好的小模型按常规方式（右图）使用。
+### 4.4混合训练
+就是随机挑选两张图，随即生成一个[0,1]的参数来将两张图加起来，
+这样新的样本就变成了,具体训练是选择`lambda`为0.2
+```
+x=lambda*x1+(1-lambda)x2
+y=lambda*x1+(1-lambda)y2
 
+```
+
+### 4.5Results
+结果如下
+![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result6.png)
+
+## 5.迁移学习
+证明了这些`tricks`以及微调的网络对于**目标检测**以及**图像分割**也是有作用的。
+结果如下
+![image](https://github.com/Linchunhui/Tricks-and-new-ResNet/blob/master/image/result_transfer.png)
 
 
 
